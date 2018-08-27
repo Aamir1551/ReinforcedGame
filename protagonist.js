@@ -2,9 +2,11 @@
 /* eslint-disable no-console */
 /*jslint node: true */
 'use strict';
-class cell extends CircleSprite{ 
-    constructor(context, x, y, defaultRad, color, drawer, keys, stateDims) {
-        super(context, x, y, defaultRad, color, drawer, keys, stateDims);
+
+class Cell extends CircleSprite { 
+
+    constructor(x, y, defaultRad, color, stateDims) {
+        super(x, y, defaultRad, color, stateDims);
         
         this.NumActions.setAll(4); //number of actions that can be done if cell is inside the grid
         this.boundary = 8;
@@ -20,23 +22,10 @@ class cell extends CircleSprite{
         this.a1 = function() {this.x -=3};
         this.a2 = function() {this.y +=3};
         this.a3 = function() {this.y -=3};
-        
     }
     
     update() {
-        if(this.keys[38] === true) {
-            this.y -= this.dirChange;
-        }
-        if(this.keys[40] === true) {
-            this.y += this.dirChange;
-        }
-        if(this.keys[37] === true) {
-            this.x -= this.dirChange;
-        }
-        if(this.keys[39] === true) {
-            this.x += this.dirChange;
-        }
-        if(!this.CheckIfStateAllowed){
+        if(this.invalidState()){
             window.alert("reason");
         }
     };
@@ -76,20 +65,12 @@ class cell extends CircleSprite{
         }
         this.h();
         
-        if(!this.CheckIfStateAllowed()) {
-            for(var i=0;i<100;i++){
-                window.alert("what????? this shouldnt happen")
-            }
+        if(this.invalidState()) {
+            window.alert("what????? this shouldnt happen")
         }
-        
     }
     
-    CheckIfStateAllowed() {
-        element.innerHTML = (this.spriteAgent.iterations + " " + this.x.toString() + " " + this.y.toString() + " " + this.stateDims[0] + " " + this.stateDims[1]);
-        if( (this.x<=0) || (this.x>=this.stateDims[0]) || (this.y<=0) || (this.y>=this.stateDims[1])) {
-            return false;
-        } else {
-            return true;
-        }
+    invalidState() {
+        return this.x<=0 || this.x>=this.stateDims[0] || this.y<=0 || this.y>=this.stateDims[1];
     }
 }

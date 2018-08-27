@@ -3,17 +3,16 @@
 /*jslint node: true */
 'use strict';
 class Sprite {
-    constructor(context, x, y, color, drawer, keys, stateDims) {
-        this.ctx = context;
+    constructor(x, y, color, stateDims) {
         this.x = x;
         this.y = y;
         this.color = color;
-        drawer.drawSprites.push(this);
-        this.keys = keys;
+
         this.stateProperties = [];
         this.stateDims = stateDims;
         this.rewards = [];
         this.punishments = [];
+
         if(stateDims !== null) {
             this.NumActions = new ndarray(this.stateDims);
         }
@@ -36,66 +35,37 @@ class Sprite {
         }
     }
     
-    draw(){}
+    draw(ctx){}
     update() {}
     getState() {}
     doAction() {}
-    
 }
 
-class CircleSprite extends Sprite{
+class CircleSprite extends Sprite {
     
-    constructor(context, x, y, defaultRad, color, drawer, keys, stateDims) {
-        super(context, x, y, color, drawer, keys, stateDims);
+    constructor(x, y, defaultRad, color, stateDims) {
+        super(x, y, color, stateDims);
         this.radius = defaultRad;
     }
     
-    draw() {
-        this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-        this.ctx.fillStyle = this.color;
-        this.ctx.fill();
-        this.ctx.stroke();
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.stroke();
     }
 }
 
-class RectSprite extends Sprite{
-    constructor(context, x, y, height, width, color, drawer, keys, stateDims) {
-        super(context, x, y, color, drawer, keys, stateDims);
+class RectSprite extends Sprite {
+    constructor(x, y, height, width, color, stateDims) {
+        super(x, y, color, stateDims);
         this.width = width;
         this.height = height;   
     }
-    draw() {
-        this.ctx.fillStyle = this.color;
-        this.ctx.fillRect(this.x, this.y, this.width, this.height);
-    }
-}
 
-class drawer {
-    constructor() {
-        this.drawSprites = [];
+    draw(ctx) {
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
     }
-    
-    draw() {
-        for(var o of this.drawSprites) {
-            o.update();
-            o.draw();
-            if(o.spriteAgent !== null) {
-                o.spriteAgent.makeMove();
-                if(o.spriteAgent.training === true) {
-                    o.spriteAgent.train();
-                }
-            }
-            o.NeedReset();
-        }
-    }
-}
-
-function initControls(keysPressed) {
-    window.addEventListener('keydown', function(e) {
-        keysPressed[e.keyCode] = true;
-    });
-    window.addEventListener('keyup', function(e) {
-        keysPressed[e.keyCode] = false;
-    });    
 }
